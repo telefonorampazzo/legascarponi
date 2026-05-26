@@ -98,29 +98,28 @@ export async function GET() {
 console.log(JSON.stringify(teams, null, 2))
 
 for (const team of teams) {
-      await supabase
-        .from('teams')
-        .update({
-          points: team.points,
-          wins: team.wins,
-          draws: team.draws,
-          losses: team.losses,
-          goals_for: team.goals_for,
-          goals_against: team.goals_against,
-          total_points: team.total_points,
-        })
-        .eq('slug', team.slug)
-    }
+  const result = await supabase
+    .from('teams')
+    .update({
+      points: team.points,
+      wins: team.wins,
+      draws: team.draws,
+      losses: team.losses,
+      goals_for: team.goals_for,
+      goals_against: team.goals_against,
+      total_points: team.total_points,
+    })
+    .eq('slug', team.slug)
+    .select()
 
-    return NextResponse.json({
-      success: true,
-      updated: teams.length,
-    })
-  } catch (error) {
-    return NextResponse.json({
-      success: false,
-      error:
-        error instanceof Error ? error.message : 'Unknown error',
-    })
-  }
+  console.log(
+    'UPDATE:',
+    team.slug,
+    JSON.stringify(result, null, 2)
+  )
 }
+
+return NextResponse.json({
+  success: true,
+  updated: teams.length,
+})
