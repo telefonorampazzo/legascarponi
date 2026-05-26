@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server'
 import axios from 'axios'
-import * as cheerio from 'cheerio'
 
 export async function GET() {
   try {
@@ -14,20 +13,20 @@ export async function GET() {
       }
     )
 
-    const $ = cheerio.load(html)
-
-    const bodyText = $('body').text()
+    const pos = html.indexOf('Herta Vernello')
 
     return NextResponse.json({
-      success: true,
-      containsWinner: bodyText.includes('Herta Vernello'),
-      containsClassifica: bodyText.toLowerCase().includes('classifica'),
-      preview: bodyText.substring(0, 2000),
+      found: pos !== -1,
+      snippet:
+        pos !== -1
+          ? html.substring(pos - 500, pos + 3000)
+          : 'not found',
     })
   } catch (error) {
     return NextResponse.json({
       success: false,
-      error: error instanceof Error ? error.message : 'Unknown error',
+      error:
+        error instanceof Error ? error.message : 'Unknown error',
     })
   }
 }
