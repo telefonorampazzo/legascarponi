@@ -74,12 +74,13 @@ export default async function HomePage() {
                 </div>
 
                 <div>
-                  <div className="font-bold text-2xl">
-                    {team.name}
-                  </div>
-                </div>
-              </div>
-
+  <Link
+    href={`/squadre/${team.slug}`}
+    className="font-bold text-2xl hover:text-cyan-400 transition"
+  >
+    {team.name}
+  </Link>
+            </div>
               <div className="text-cyan-400 text-3xl font-black">
                 {team.points}
               </div>
