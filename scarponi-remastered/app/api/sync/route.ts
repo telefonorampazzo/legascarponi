@@ -123,3 +123,13 @@ return NextResponse.json({
   success: true,
   updated: teams.length,
 })
+} catch (error) {
+  return NextResponse.json({
+    success: false,
+    error:
+      error instanceof Error
+        ? error.message
+        : 'Unknown error',
+  })
+}
+}
