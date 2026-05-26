@@ -1,80 +1,124 @@
 import { NextResponse } from 'next/server'
 import axios from 'axios'
 import * as cheerio from 'cheerio'
+import { createClient } from '@supabase/supabase-js'
+
+function slugify(text: string) {
+  return text
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '')
+}
 
 export async function GET() {
-  const { data: html } = await axios.get(
-    'https://leghe.fantacalcio.it/lega-scarponi-remastered?id=3054',
-    {
-      headers: {
-        'User-Agent':
-          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-      },
-    }
-  )
+  try {
+    const { data: html } = await axios.get(
+      'https://leghe.fantacalcio.it/lega-scarponi-remastered?id=3054',
+      {
+        headers: {
+          'User-Agent':
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
+        },
+      }
+    )
 
-  const $ = cheerio.load(html)
+    const $ = cheerio.load(html)
 
-  const teams: any[] = []
+    const teams: any[] = []
 
-  $('tr.ranking-row').each((_, row) => {
-    const team = {
-      name: $(row)
+    $('tr.ranking-row').each((_, row) => {
+      const name = $(row)
         .find('td[data-key="teamName"] a')
         .text()
-        .trim(),
+        .trim()
 
-      games: $(row)
-        .find('td[data-key="rank-g"]')
-        .text()
-        .trim(),
+      teams.push({
+        name,
+        slug: slugify(name),
 
-      wins: $(row)
-        .find('td[data-key="rank-v"]')
-        .text()
-        .trim(),
+        points: Number(
+          $(row)
+            .find('td[data-key="rank-pt"]')
+            .text()
+            .trim()
+        ),
 
-      draws: $(row)
-        .find('td[data-key="rank-n"]')
-        .text()
-        .trim(),
+        wins: Number(
+          $(row)
+            .find('td[data-key="rank-v"]')
+            .text()
+            .trim()
+        ),
 
-      losses: $(row)
-        .find('td[data-key="rank-p"]')
-        .text()
-        .trim(),
+        draws: Number(
+          $(row)
+            .find('td[data-key="rank-n"]')
+            .text()
+            .trim()
+        ),
 
-      goalsFor: $(row)
-        .find('td[data-key="rank-gf"]')
-        .text()
-        .trim(),
+        losses: Number(
+          $(row)
+            .find('td[data-key="rank-p"]')
+            .text()
+            .trim()
+        ),
 
-      goalsAgainst: $(row)
-        .find('td[data-key="rank-gs"]')
-        .text()
-        .trim(),
+        goals_for: Number(
+          $(row)
+            .find('td[data-key="rank-gf"]')
+            .text()
+            .trim()
+        ),
 
-      goalDiff: $(row)
-        .find('td[data-key="rank-dr"]')
-        .text()
-        .trim(),
+        goals_against: Number(
+          $(row)
+            .find('td[data-key="rank-gs"]')
+            .text()
+            .trim()
+        ),
 
-      points: $(row)
-        .find('td[data-key="rank-pt"]')
-        .text()
-        .trim(),
+        total_points: Number(
+          $(row)
+            .find('td[data-key="rank-fp"]')
+            .text()
+            .replace(',', '.')
+            .trim()
+        ),
+      })
+    })
 
-      totalPoints: $(row)
-        .find('td[data-key="rank-fp"]')
-        .text()
-        .trim(),
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    )
+
+    for (const team of teams) {
+      await supabase
+        .from('teams')
+        .update({
+          points: team.points,
+          wins: team.wins,
+          draws: team.draws,
+          losses: team.losses,
+          goals_for: team.goals_for,
+          goals_against: team.goals_against,
+          total_points: team.total_points,
+        })
+        .eq('slug', team.slug)
     }
 
-    teams.push(team)
-  })
-
-  return NextResponse.json({
-    count: teams.length,
-    teams,
-  })
+    return NextResponse.json({
+      success: true,
+      updated: teams.length,
+    })
+  } catch (error) {
+    return NextResponse.json({
+      success: false,
+      error:
+        error instanceof Error ? error.message : 'Unknown error',
+    })
+  }
 }
