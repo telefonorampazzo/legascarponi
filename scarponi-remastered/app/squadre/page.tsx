@@ -1,62 +1,91 @@
+import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 
-export default async function SquadrePage() {
-  const { data: teams } = await supabase
+export default async function TeamPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>
+}) {
+  const { slug } = await params
+
+  const { data: team } = await supabase
     .from('teams')
     .select('*')
-    .order('points', { ascending: false })
+    .eq('slug', slug)
+    .single()
+
+  if (!team) {
+    notFound()
+  }
 
   return (
     <main className="min-h-screen bg-black text-white">
-      <div className="max-w-7xl mx-auto px-8 py-16">
+      <div className="max-w-5xl mx-auto px-8 py-16">
 
-        <h1 className="text-6xl font-black mb-12">
-          Squadre
+        <Link
+          href="/teams"
+          className="text-cyan-400 hover:text-cyan-300"
+        >
+          ← Torna alla classifica
+        </Link>
+
+        <h1 className="text-6xl font-black mt-8 mb-4">
+          {team.name}
         </h1>
 
-        <div className="grid gap-4">
+        <p className="text-zinc-500 text-xl mb-12">
+          Scheda ufficiale squadra
+        </p>
 
-          {teams?.map((team, index) => (
-            <Link
-              key={team.id}
-              href={`/squadre/${team.slug}`}
-              className="
-                rounded-2xl
-                border
-                border-zinc-900
-                bg-zinc-950
-                p-6
-                flex
-                justify-between
-                items-center
-                hover:border-cyan-500
-                transition
-              "
-            >
-              <div className="flex items-center gap-4">
+        <div className="grid md:grid-cols-2 gap-6">
 
-                <div className="text-zinc-500 text-xl w-10">
-                  #{index + 1}
-                </div>
+          <div className="bg-zinc-950 border border-zinc-900 rounded-2xl p-6">
+            <div className="text-zinc-500">
+              Punti Classifica
+            </div>
 
-                <div>
-                  <div className="font-bold text-2xl">
-                    {team.name}
-                  </div>
+            <div className="text-cyan-400 text-6xl font-black mt-2">
+              {team.points}
+            </div>
+          </div>
 
-                  <div className="text-zinc-500">
-                    {team.slug}
-                  </div>
-                </div>
+          <div className="bg-zinc-950 border border-zinc-900 rounded-2xl p-6">
+            <div className="text-zinc-500">
+              Fantapunti Totali
+            </div>
 
+            <div className="text-5xl font-black mt-2">
+              {team.total_points}
+            </div>
+          </div>
+
+          <div className="bg-zinc-950 border border-zinc-900 rounded-2xl p-6">
+            <div className="text-zinc-500 mb-4">
+              Record
+            </div>
+
+            <div className="space-y-2 text-lg">
+              <div>✅ Vittorie: {team.wins}</div>
+              <div>➖ Pareggi: {team.draws}</div>
+              <div>❌ Sconfitte: {team.losses}</div>
+            </div>
+          </div>
+
+          <div className="bg-zinc-950 border border-zinc-900 rounded-2xl p-6">
+            <div className="text-zinc-500 mb-4">
+              Gol
+            </div>
+
+            <div className="space-y-2 text-lg">
+              <div>⚽ Fatti: {team.goals_for}</div>
+              <div>🥅 Subiti: {team.goals_against}</div>
+              <div>
+                📊 Differenza:{' '}
+                {team.goals_for - team.goals_against}
               </div>
-
-              <div className="text-cyan-400 text-3xl font-black">
-                {team.points}
-              </div>
-            </Link>
-          ))}
+            </div>
+          </div>
 
         </div>
       </div>
