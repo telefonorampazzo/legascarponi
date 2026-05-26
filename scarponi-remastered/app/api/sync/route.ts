@@ -95,7 +95,7 @@ export async function GET() {
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 )
 
-console.log(JSON.stringify(teams, null, 2))
+console.log('START UPDATE')
 
 for (const team of teams) {
   const result = await supabase
