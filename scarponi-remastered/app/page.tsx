@@ -1,65 +1,114 @@
-import Image from "next/image";
+import Link from 'next/link'
+import { supabase } from '@/lib/supabase'
 
-export default function Home() {
+export default async function HomePage() {
+  const { data: teams } = await supabase
+    .from('teams')
+    .select('*')
+    .order('points', { ascending: false })
+
+  const ranking = teams ?? []
+
+  const first = ranking[0]
+  const second = ranking[1]
+  const third = ranking[2]
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+    <main className="min-h-screen bg-black text-white">
+
+      <section className="max-w-7xl mx-auto px-8 py-20">
+        <h1 className="text-7xl font-black">
+          LEGA SCARPONI
+        </h1>
+
+        <p className="text-zinc-400 text-xl mt-4">
+          Dashboard ufficiale della Lega Scarponi Remastered
+        </p>
+      </section>
+
+      <section className="max-w-7xl mx-auto px-8 pb-16">
+        <h2 className="text-5xl font-black mb-10">
+          🏆 Podio
+        </h2>
+
+        <div className="grid md:grid-cols-3 gap-6">
+
+          {second && (
+            <Link
+              href={`/squadre/${second.slug}`}
+              className="bg-zinc-950 rounded-3xl p-8 border border-zinc-800"
             >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+              <div className="text-5xl">🥈</div>
+              <h3 className="text-3xl font-bold mt-4">
+                {second.name}
+              </h3>
+              <div className="text-cyan-400 text-5xl font-black mt-4">
+                {second.points}
+              </div>
+            </Link>
+          )}
+
+          {first && (
+            <Link
+              href={`/squadre/${first.slug}`}
+              className="bg-yellow-500/10 border border-yellow-500 rounded-3xl p-10"
             >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+              <div className="text-6xl">🥇</div>
+
+              <h3 className="text-4xl font-black mt-4">
+                {first.name}
+              </h3>
+
+              <div className="text-yellow-400 text-6xl font-black mt-4">
+                {first.points}
+              </div>
+            </Link>
+          )}
+
+          {third && (
+            <Link
+              href={`/squadre/${third.slug}`}
+              className="bg-zinc-950 rounded-3xl p-8 border border-zinc-800"
+            >
+              <div className="text-5xl">🥉</div>
+
+              <h3 className="text-3xl font-bold mt-4">
+                {third.name}
+              </h3>
+
+              <div className="text-cyan-400 text-5xl font-black mt-4">
+                {third.points}
+              </div>
+            </Link>
+          )}
+
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </section>
+
+      <section className="max-w-7xl mx-auto px-8 pb-20">
+        <h2 className="text-4xl font-bold mb-8">
+          Classifica Completa
+        </h2>
+
+        <div className="grid gap-4">
+          {ranking.map((team, index) => (
+            <Link
+              key={team.id}
+              href={`/squadre/${team.slug}`}
+              className="bg-zinc-950 border border-zinc-900 rounded-2xl p-6 flex justify-between hover:border-cyan-500 transition"
+            >
+              <div>
+                #{index + 1} · {team.name}
+              </div>
+
+              <div className="font-black text-cyan-400">
+                {team.points}
+              </div>
+            </Link>
+          ))}
         </div>
-      </main>
-    </div>
-  );
+      </section>
+
+    </main>
+  )
 }
