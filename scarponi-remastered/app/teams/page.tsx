@@ -62,33 +62,36 @@ export default async function HomePage() {
           </Link>
         </div>
 
-<div className="grid gap-4">
-  {top5.map((team, index) => (
-    <div
-      key={team.id}
-      className="rounded-2xl border border-zinc-900 bg-zinc-950 p-6 flex justify-between items-center"
-    >
-      <div className="flex items-center gap-4">
-        <div className="text-zinc-500 text-xl w-10">
-          #{index + 1}
-        </div>
+        <div className="grid gap-4">
+          {top5.map((team, index) => (
+            <div
+              key={team.id}
+              className="rounded-2xl border border-zinc-900 bg-zinc-950 p-6 flex justify-between items-center"
+            >
+              <div className="flex items-center gap-4">
+                <div className="text-zinc-500 text-xl w-10">
+                  #{index + 1}
+                </div>
 
-        <div>
-          <Link
-            href={`/squadre/${team.slug}`}
-            className="font-bold text-2xl hover:text-cyan-400 transition"
-          >
-            {team.name}
-          </Link>
-        </div>
-      </div>
+                <div>
+                  <Link
+                    href={`/squadre/${team.slug}`}
+                    className="font-bold text-2xl hover:text-cyan-400 transition"
+                  >
+                    {team.name}
+                  </Link>
+                </div>
+              </div>
 
-      <div className="text-cyan-400 text-3xl font-black">
-        {team.points}
-      </div>
-    </div>
-  ))}
-</div>
+              <div className="text-cyan-400 text-3xl font-black">
+                {team.points}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* MENU */}
       <section className="max-w-7xl mx-auto px-8 pb-20">
         <h2 className="text-4xl font-bold mb-8">
           Esplora la Lega
