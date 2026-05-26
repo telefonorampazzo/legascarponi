@@ -90,12 +90,14 @@ export async function GET() {
       })
     })
 
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
-    )
+ const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+)
 
-    for (const team of teams) {
+console.log(JSON.stringify(teams, null, 2))
+
+for (const team of teams) {
       await supabase
         .from('teams')
         .update({
