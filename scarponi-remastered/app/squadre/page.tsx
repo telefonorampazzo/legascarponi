@@ -1,3 +1,4 @@
+import TeamPerformanceChart from '@/components/TeamPerformanceChart'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
@@ -15,9 +16,26 @@ export default async function TeamPage({
     .eq('slug', slug)
     .single()
 
+  const { data: history } = await supabase
+    .from('standings_history')
+    .select('*')
+    .eq('team_slug', slug)
+    .order('created_at', { ascending: true })
+
   if (!team) {
     notFound()
   }
+
+  const chartData =
+    history?.map((item) => ({
+      date: new Date(item.created_at)
+        .toLocaleDateString('it-IT', {
+          day: '2-digit',
+          month: '2-digit',
+        }),
+
+      points: item.points,
+    })) ?? []
 
   return (
     <main className="min-h-screen bg-black text-white">
@@ -80,6 +98,7 @@ export default async function TeamPage({
             <div className="space-y-2 text-lg">
               <div>⚽ Fatti: {team.goals_for}</div>
               <div>🥅 Subiti: {team.goals_against}</div>
+
               <div>
                 📊 Differenza:{' '}
                 {team.goals_for - team.goals_against}
@@ -88,6 +107,11 @@ export default async function TeamPage({
           </div>
 
         </div>
+
+        <div className="mt-12">
+          <TeamPerformanceChart data={chartData} />
+        </div>
+
       </div>
     </main>
   )
