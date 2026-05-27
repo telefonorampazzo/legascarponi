@@ -112,6 +112,21 @@ for (const team of teams) {
     .eq('slug', team.slug)
     .select()
 
+  await supabase
+    .from('standings_history')
+    .insert({
+      team_slug: team.slug,
+      points: team.points,
+      total_points: team.total_points,
+    })
+
+  console.log(
+    'UPDATE:',
+    team.slug,
+    JSON.stringify(result, null, 2)
+  )
+}
+
   console.log(
     'UPDATE:',
     team.slug,
