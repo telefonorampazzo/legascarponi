@@ -127,17 +127,11 @@ for (const team of teams) {
   )
 }
 
-  console.log(
-    'UPDATE:',
-    team.slug,
-    JSON.stringify(result, null, 2)
-  )
-}
-
 return NextResponse.json({
   success: true,
   updated: teams.length,
 })
+
 } catch (error) {
   return NextResponse.json({
     success: false,
