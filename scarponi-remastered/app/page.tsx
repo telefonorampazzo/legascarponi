@@ -2,259 +2,490 @@ import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 
 export default async function HomePage() {
+
+  /* =========================
+     REAL DATA
+  ========================== */
+
   const { data: teams } = await supabase
     .from('teams')
     .select('*')
-    .order('points', { ascending: false })
+    .order('points', {
+      ascending: false,
+    })
 
-  const ranking = teams ?? []
+  const topTeams = teams?.slice(0, 5) ?? []
 
-  const first = ranking[0]
-  const second = ranking[1]
-  const third = ranking[2]
-
-  const bestAttack = [...ranking].sort(
-    (a, b) => (b.goals_for ?? 0) - (a.goals_for ?? 0)
-  )[0]
-
-  const bestDefense = [...ranking].sort(
-    (a, b) => (a.goals_against ?? 0) - (b.goals_against ?? 0)
-  )[0]
-
-  const mostPoints = [...ranking].sort(
-    (a, b) => (b.total_points ?? 0) - (a.total_points ?? 0)
-  )[0]
+  const leader = topTeams[0]
 
   return (
-    <main className="min-h-screen bg-black text-white overflow-hidden">
-
-      {/* GLOW BACKGROUND */}
-      <div className="fixed inset-0 -z-10">
-        <div className="absolute top-0 left-1/2 h-[700px] w-[700px] -translate-x-1/2 rounded-full bg-cyan-500/10 blur-[180px]" />
-        <div className="absolute bottom-0 right-0 h-[500px] w-[500px] rounded-full bg-violet-500/10 blur-[160px]" />
-      </div>
+    <main className="bg-black text-white overflow-hidden">
 
       {/* HERO */}
-      <section className="max-w-7xl mx-auto px-8 pt-32 pb-24">
-        <div className="inline-flex items-center gap-2 rounded-full border border-cyan-500/20 bg-cyan-500/10 px-4 py-2 text-cyan-400 text-sm">
-          ⚽ LEGA SCARPONI REMASTERED
+      <section className="relative h-screen flex items-end overflow-hidden">
+
+        {/* BACKGROUND */}
+        <div className="absolute inset-0 bg-black" />
+
+        {/* GRID */}
+        <div
+          className="
+            absolute inset-0
+            opacity-[0.04]
+            bg-[linear-gradient(to_right,#ffffff_1px,transparent_1px),linear-gradient(to_bottom,#ffffff_1px,transparent_1px)]
+            bg-[size:120px_120px]
+          "
+        />
+
+        {/* GLOW */}
+        <div
+          className="
+            absolute top-0 left-1/2
+            -translate-x-1/2
+            h-[700px] w-[700px]
+            rounded-full
+            bg-white/5
+            blur-[180px]
+          "
+        />
+
+        {/* CONTENT */}
+        <div
+          className="
+            relative z-10
+            max-w-7xl mx-auto
+            px-8
+            pb-24
+            w-full
+          "
+        >
+
+          <div className="max-w-5xl">
+
+            <div
+              className="
+                text-sm uppercase
+                tracking-[0.4em]
+                text-zinc-500
+              "
+            >
+              Lega Scarponi Remastered
+            </div>
+
+            <h1
+              className="
+                mt-8
+                text-7xl md:text-[10rem]
+                font-black
+                leading-[0.9]
+                tracking-tight
+              "
+            >
+              LIVE
+              <br />
+              THE
+              <br />
+              GAME.
+            </h1>
+
+            <p
+              className="
+                mt-10
+                text-xl
+                text-zinc-400
+                max-w-2xl
+                leading-10
+              "
+            >
+              Classifica live, statistiche avanzate
+              e schede squadra aggiornate automaticamente.
+            </p>
+
+            <div className="mt-14 flex flex-wrap gap-4">
+
+              <Link
+                href="/squadre"
+                className="
+                  rounded-full
+                  bg-white
+                  text-black
+                  px-8 py-4
+                  font-semibold
+                  hover:bg-zinc-200
+                  transition
+                "
+              >
+                Esplora le Squadre
+              </Link>
+
+              <Link
+                href="/regolamento"
+                className="
+                  rounded-full
+                  border border-white/10
+                  bg-white/5
+                  backdrop-blur-xl
+                  px-8 py-4
+                  font-semibold
+                  hover:bg-white/10
+                  transition
+                "
+              >
+                Regolamento
+              </Link>
+
+            </div>
+
+          </div>
+
         </div>
 
-        <h1 className="mt-8 text-7xl md:text-9xl font-black leading-none tracking-tight">
-          LEGA
-          <br />
-          SCARPONI
-        </h1>
-
-        <p className="mt-8 max-w-2xl text-xl text-zinc-400">
-          Dashboard premium della lega.
-          Classifica live, statistiche avanzate e schede squadra
-          aggiornate automaticamente da Fantacalcio.
-        </p>
-
-        <div className="mt-10 flex gap-4 flex-wrap">
-          <Link
-            href="/teams"
-            className="rounded-2xl bg-white text-black px-8 py-4 font-bold hover:scale-105 transition"
-          >
-            Classifica
-          </Link>
-
-          <Link
-            href="/squadre"
-            className="rounded-2xl border border-zinc-800 px-8 py-4 font-bold hover:border-cyan-500 transition"
-          >
-            Squadre
-          </Link>
-
-          <Link
-            href="/statistiche"
-            className="rounded-2xl border border-zinc-800 px-8 py-4 font-bold hover:border-cyan-500 transition"
-          >
-            Statistiche
-          </Link>
-        </div>
       </section>
 
-      {/* PODIO */}
-      <section className="max-w-7xl mx-auto px-8 pb-24">
-        <h2 className="text-4xl font-black mb-10">
-          🏆 Podio della Lega
-        </h2>
+      {/* LEADER */}
+      {leader && (
+        <section className="border-t border-white/10">
 
-        <div className="grid lg:grid-cols-3 gap-8">
+          <div className="max-w-7xl mx-auto px-8 py-32">
 
-          {second && (
-            <Link
-              href={`/squadre/${second.slug}`}
-              className="rounded-3xl border border-zinc-800 bg-zinc-950/80 backdrop-blur p-8 hover:scale-[1.02] transition"
-            >
-              <div className="text-5xl">🥈</div>
+            <div className="grid xl:grid-cols-2 gap-20 items-end">
 
-              <h3 className="mt-6 text-3xl font-bold">
-                {second.name}
-              </h3>
+              <div>
 
-              <div className="mt-6 text-5xl font-black text-cyan-400">
-                {second.points}
+                <div
+                  className="
+                    text-sm uppercase
+                    tracking-[0.4em]
+                    text-zinc-500
+                  "
+                >
+                  Team Leader
+                </div>
+
+                <h2
+                  className="
+                    mt-8
+                    text-6xl md:text-[8rem]
+                    font-black
+                    leading-[0.9]
+                    tracking-tight
+                  "
+                >
+                  {leader.name}.
+                </h2>
+
               </div>
 
-              <div className="text-zinc-500 mt-2">
-                punti
+              <div>
+
+                <div className="space-y-10">
+
+                  <div className="flex items-center justify-between">
+
+                    <span className="text-zinc-500 text-lg">
+                      Punti
+                    </span>
+
+                    <span className="text-6xl font-black">
+                      {leader.points}
+                    </span>
+
+                  </div>
+
+                  <div className="flex items-center justify-between">
+
+                    <span className="text-zinc-500 text-lg">
+                      Fantapunti
+                    </span>
+
+                    <span className="text-6xl font-black">
+                      {leader.total_points}
+                    </span>
+
+                  </div>
+
+                  <div className="flex items-center justify-between">
+
+                    <span className="text-zinc-500 text-lg">
+                      Vittorie
+                    </span>
+
+                    <span className="text-6xl font-black">
+                      {leader.wins}
+                    </span>
+
+                  </div>
+
+                </div>
+
               </div>
-            </Link>
-          )}
 
-          {first && (
-            <Link
-              href={`/squadre/${first.slug}`}
-              className="rounded-3xl border border-cyan-500/40 bg-gradient-to-b from-cyan-500/10 to-zinc-950 p-10 scale-105 shadow-[0_0_60px_rgba(0,212,255,.15)] hover:scale-[1.07] transition"
-            >
-              <div className="text-6xl">🥇</div>
+            </div>
 
-              <h3 className="mt-6 text-4xl font-black">
-                {first.name}
-              </h3>
+          </div>
 
-              <div className="mt-6 text-7xl font-black text-cyan-400">
-                {first.points}
-              </div>
+        </section>
+      )}
 
-              <div className="text-zinc-400 mt-2">
-                Capolista
-              </div>
-            </Link>
-          )}
+      {/* CLASSIFICA */}
+      <section className="border-t border-white/10">
 
-          {third && (
-            <Link
-              href={`/squadre/${third.slug}`}
-              className="rounded-3xl border border-zinc-800 bg-zinc-950/80 backdrop-blur p-8 hover:scale-[1.02] transition"
-            >
-              <div className="text-5xl">🥉</div>
+        <div className="max-w-7xl mx-auto px-8 py-32">
 
-              <h3 className="mt-6 text-3xl font-bold">
-                {third.name}
-              </h3>
+          <div
+            className="
+              text-sm uppercase
+              tracking-[0.4em]
+              text-zinc-500
+            "
+          >
+            Classifica Live
+          </div>
 
-              <div className="mt-6 text-5xl font-black text-cyan-400">
-                {third.points}
-              </div>
+          <div className="mt-20 space-y-10">
 
-              <div className="text-zinc-500 mt-2">
-                punti
-              </div>
-            </Link>
-          )}
+            {topTeams.map((team, index) => (
+
+              <Link
+                key={team.id}
+                href={`/squadre/${team.slug}`}
+                className="
+                  flex items-center justify-between
+                  border-b border-white/10
+                  pb-10
+                  group
+                "
+              >
+
+                <div className="flex items-center gap-10">
+
+                  <div
+                    className="
+                      text-3xl
+                      text-zinc-500
+                      font-black
+                      w-16
+                    "
+                  >
+                    0{index + 1}
+                  </div>
+
+                  <div>
+
+                    <div
+                      className="
+                        text-4xl md:text-6xl
+                        font-black
+                        tracking-tight
+                        group-hover:text-zinc-300
+                        transition
+                      "
+                    >
+                      {team.name}
+                    </div>
+
+                    <div className="mt-3 text-zinc-500">
+
+                      {team.wins}V ·
+                      {' '}
+                      {team.draws}N ·
+                      {' '}
+                      {team.losses}P
+
+                    </div>
+
+                  </div>
+
+                </div>
+
+                <div
+                  className="
+                    text-4xl md:text-5xl
+                    font-black
+                    text-zinc-400
+                  "
+                >
+                  {team.points}
+                </div>
+
+              </Link>
+
+            ))}
+
+          </div>
 
         </div>
+
       </section>
 
       {/* STATS */}
-      <section className="max-w-7xl mx-auto px-8 pb-24">
-        <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-6">
+      <section className="border-t border-white/10">
 
-          <div className="rounded-3xl bg-zinc-950 border border-zinc-900 p-8">
-            <div className="text-zinc-500">
-              Miglior Attacco
+        <div className="max-w-7xl mx-auto px-8 py-32">
+
+          <div className="grid xl:grid-cols-3 gap-8">
+
+            <div
+              className="
+                rounded-[40px]
+                border border-white/10
+                bg-zinc-950
+                p-12
+              "
+            >
+
+              <div
+                className="
+                  text-sm uppercase
+                  tracking-[0.3em]
+                  text-zinc-500
+                "
+              >
+                Squadre
+              </div>
+
+              <div
+                className="
+                  mt-8
+                  text-7xl
+                  font-black
+                  tracking-tight
+                "
+              >
+                {teams?.length ?? 0}
+              </div>
+
             </div>
 
-            <div className="mt-4 text-2xl font-bold">
-              {bestAttack?.name}
+            <div
+              className="
+                rounded-[40px]
+                border border-white/10
+                bg-zinc-950
+                p-12
+              "
+            >
+
+              <div
+                className="
+                  text-sm uppercase
+                  tracking-[0.3em]
+                  text-zinc-500
+                "
+              >
+                Leader
+              </div>
+
+              <div
+                className="
+                  mt-8
+                  text-5xl
+                  font-black
+                  tracking-tight
+                  leading-tight
+                "
+              >
+                {leader?.name}
+              </div>
+
             </div>
 
-            <div className="mt-6 text-5xl font-black text-cyan-400">
-              {bestAttack?.goals_for}
-            </div>
-          </div>
+            <div
+              className="
+                rounded-[40px]
+                border border-white/10
+                bg-zinc-950
+                p-12
+              "
+            >
 
-          <div className="rounded-3xl bg-zinc-950 border border-zinc-900 p-8">
-            <div className="text-zinc-500">
-              Miglior Difesa
-            </div>
+              <div
+                className="
+                  text-sm uppercase
+                  tracking-[0.3em]
+                  text-zinc-500
+                "
+              >
+                Punti Leader
+              </div>
 
-            <div className="mt-4 text-2xl font-bold">
-              {bestDefense?.name}
-            </div>
+              <div
+                className="
+                  mt-8
+                  text-7xl
+                  font-black
+                  tracking-tight
+                "
+              >
+                {leader?.points}
+              </div>
 
-            <div className="mt-6 text-5xl font-black text-cyan-400">
-              {bestDefense?.goals_against}
-            </div>
-          </div>
-
-          <div className="rounded-3xl bg-zinc-950 border border-zinc-900 p-8">
-            <div className="text-zinc-500">
-              Fantapunti Leader
-            </div>
-
-            <div className="mt-4 text-2xl font-bold">
-              {mostPoints?.name}
-            </div>
-
-            <div className="mt-6 text-5xl font-black text-cyan-400">
-              {mostPoints?.total_points}
-            </div>
-          </div>
-
-          <div className="rounded-3xl bg-zinc-950 border border-zinc-900 p-8">
-            <div className="text-zinc-500">
-              Squadre
             </div>
 
-            <div className="mt-6 text-5xl font-black text-cyan-400">
-              {ranking.length}
-            </div>
           </div>
 
         </div>
+
       </section>
 
-      {/* CLASSIFICA */}
-      <section className="max-w-7xl mx-auto px-8 pb-32">
-        <div className="flex items-center justify-between mb-10">
-          <h2 className="text-4xl font-black">
-            Classifica Live
-          </h2>
+      {/* CTA */}
+      <section className="border-t border-white/10">
 
-          <Link
-            href="/teams"
-            className="text-cyan-400 hover:text-cyan-300"
-          >
-            Vedi completa →
-          </Link>
-        </div>
+        <div className="max-w-7xl mx-auto px-8 py-32">
 
-        <div className="grid gap-4">
+          <div className="max-w-5xl">
 
-          {ranking.map((team, index) => (
-            <Link
-              key={team.id}
-              href={`/squadre/${team.slug}`}
-              className="rounded-2xl border border-zinc-900 bg-zinc-950 hover:border-cyan-500 transition p-6 flex items-center justify-between"
+            <div
+              className="
+                text-sm uppercase
+                tracking-[0.4em]
+                text-zinc-500
+              "
             >
-              <div className="flex items-center gap-6">
-                <div className="text-zinc-500 text-2xl w-10">
-                  #{index + 1}
-                </div>
+              Lega Scarponi
+            </div>
 
-                <div>
-                  <div className="font-bold text-2xl">
-                    {team.name}
-                  </div>
+            <h2
+              className="
+                mt-8
+                text-6xl md:text-[8rem]
+                font-black
+                tracking-tight
+                leading-[0.9]
+              "
+            >
+              COMPETI.
+              <br />
+              DOMINA.
+              <br />
+              VINCI.
+            </h2>
 
-                  <div className="text-zinc-500 text-sm">
-                    {team.wins}V · {team.draws}N · {team.losses}P
-                  </div>
-                </div>
-              </div>
+            <div className="mt-16">
 
-              <div className="text-cyan-400 text-4xl font-black">
-                {team.points}
-              </div>
-            </Link>
-          ))}
+              <Link
+                href="/squadre"
+                className="
+                  inline-flex
+                  items-center
+                  rounded-full
+                  bg-white
+                  text-black
+                  px-8 py-4
+                  font-semibold
+                  hover:bg-zinc-200
+                  transition
+                "
+              >
+                Visualizza Classifica
+              </Link>
+
+            </div>
+
+          </div>
 
         </div>
+
       </section>
 
     </main>

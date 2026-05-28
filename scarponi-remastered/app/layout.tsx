@@ -1,5 +1,5 @@
+import Navbar from '@/components/Navbar'
 import type { Metadata } from 'next'
-import Link from 'next/link'
 import { Geist, Geist_Mono } from 'next/font/google'
 import './globals.css'
 
@@ -26,65 +26,44 @@ export default function RootLayout({
   return (
     <html
       lang="it"
-      className={`${geistSans.variable} ${geistMono.variable}`}
+      className={`
+        ${geistSans.variable}
+        ${geistMono.variable}
+        h-full
+        antialiased
+      `}
     >
-      <body className="bg-black text-white">
+      <body className="min-h-full flex flex-col bg-black text-white">
 
         {/* NAVBAR */}
-        <header className="sticky top-0 z-50 border-b border-zinc-900 bg-black/80 backdrop-blur">
-          <div className="max-w-7xl mx-auto px-8 h-16 flex items-center justify-between">
-
-            <Link
-              href="/"
-              className="font-black text-xl tracking-tight"
-            >
-              ⚽ LEGA SCARPONI
-            </Link>
-
-            <nav className="flex items-center gap-6 text-sm font-medium">
-
-              <Link
-                href="/"
-                className="text-zinc-400 hover:text-white transition"
-              >
-                Home
-              </Link>
-
-              <Link
-                href="/teams"
-                className="text-zinc-400 hover:text-white transition"
-              >
-                Classifica
-              </Link>
-
-              <Link
-                href="/squadre"
-                className="text-zinc-400 hover:text-white transition"
-              >
-                Squadre
-              </Link>
-
-              <Link
-                href="/statistiche"
-                className="text-zinc-400 hover:text-white transition"
-              >
-                Statistiche
-              </Link>
-            </nav>
-
-          </div>
-        </header>
+        <Navbar />
 
         {/* CONTENUTO */}
-        <main>{children}</main>
+        <main className="flex-1">
+          {children}
+        </main>
 
         {/* FOOTER */}
-        <footer className="border-t border-zinc-900 py-10 text-center text-zinc-500">
-          <p>Lega Scarponi Remastered</p>
+        <footer
+          className="
+            border-t border-cyan-500/10
+            bg-black/60
+            backdrop-blur-xl
+            py-10
+            text-center
+            text-zinc-500
+          "
+        >
 
-          <p className="mt-2 text-sm">
-            Aggiornamento automatico Fantacalcio • Next.js • Supabase • Vercel
+          <p className="font-semibold tracking-wide">
+            ⚡ Lega Scarponi Remastered
           </p>
+
+          <p className="mt-2 text-sm text-zinc-600">
+            Dashboard fantasy premium •
+            Next.js • Supabase • Analytics AI
+          </p>
+
         </footer>
 
       </body>
