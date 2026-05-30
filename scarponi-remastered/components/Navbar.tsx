@@ -1,10 +1,22 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    if (open) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, [open]);
 
   return (
     <>
@@ -31,7 +43,7 @@ export default function Navbar() {
               LEGA SCARPONI
             </Link>
 
-            {/* DESKTOP */}
+            {/* DESKTOP MENU */}
             <nav className="hidden md:flex items-center gap-8">
 
               <Link
@@ -64,17 +76,19 @@ export default function Navbar() {
 
             </nav>
 
-            {/* MOBILE BUTTON */}
+            {/* MOBILE HAMBURGER */}
             <button
               onClick={() => setOpen(true)}
               className="
                 md:hidden
-                text-white
-                text-3xl
-                font-light
+                flex
+                flex-col
+                gap-1.5
               "
             >
-              ☰
+              <span className="w-6 h-[2px] bg-white block" />
+              <span className="w-6 h-[2px] bg-white block" />
+              <span className="w-6 h-[2px] bg-white block" />
             </button>
 
           </div>
@@ -83,97 +97,120 @@ export default function Navbar() {
 
       </header>
 
-      {/* OVERLAY */}
-      {open && (
-        <div
+      {/* MOBILE MENU */}
+      <div
+        className={`
+          fixed inset-0 z-[60]
+          bg-black/95
+          backdrop-blur-2xl
+          transition-all duration-500
+          ${
+            open
+              ? "translate-x-0 opacity-100"
+              : "translate-x-full opacity-0 pointer-events-none"
+          }
+        `}
+      >
+
+        <div className="flex justify-between items-center p-8">
+
+          <div
+            className="
+              text-white
+              font-black
+              text-2xl
+            "
+          >
+            LEGA SCARPONI
+          </div>
+
+          <button
+            onClick={() => setOpen(false)}
+            className="
+              text-white
+              text-5xl
+              leading-none
+            "
+          >
+            ×
+          </button>
+
+        </div>
+
+        <nav
           className="
-            fixed inset-0 z-[60]
-            bg-black/95
-            backdrop-blur-xl
+            flex
+            flex-col
+            justify-center
+            items-center
+            gap-10
+            h-[75vh]
           "
         >
 
-          <div className="flex justify-end p-8">
-
-            <button
-              onClick={() => setOpen(false)}
-              className="
-                text-white
-                text-4xl
-              "
-            >
-              ×
-            </button>
-
-          </div>
-
-          <nav
+          <Link
+            href="/"
+            onClick={() => setOpen(false)}
             className="
-              flex
-              flex-col
-              items-center
-              justify-center
-              gap-10
-              h-[80vh]
+              text-5xl
+              md:text-6xl
+              font-black
+              tracking-tight
+              hover:text-zinc-500
+              transition
             "
           >
+            Home
+          </Link>
 
-            <Link
-              href="/"
-              onClick={() => setOpen(false)}
-              className="
-                text-4xl
-                font-black
-                hover:text-zinc-400
-                transition
-              "
-            >
-              Home
-            </Link>
+          <Link
+            href="/squadre"
+            onClick={() => setOpen(false)}
+            className="
+              text-5xl
+              md:text-6xl
+              font-black
+              tracking-tight
+              hover:text-zinc-500
+              transition
+            "
+          >
+            Squadre
+          </Link>
 
-            <Link
-              href="/squadre"
-              onClick={() => setOpen(false)}
-              className="
-                text-4xl
-                font-black
-                hover:text-zinc-400
-                transition
-              "
-            >
-              Squadre
-            </Link>
+          <Link
+            href="/statistiche"
+            onClick={() => setOpen(false)}
+            className="
+              text-5xl
+              md:text-6xl
+              font-black
+              tracking-tight
+              hover:text-zinc-500
+              transition
+            "
+          >
+            Statistiche
+          </Link>
 
-            <Link
-              href="/statistiche"
-              onClick={() => setOpen(false)}
-              className="
-                text-4xl
-                font-black
-                hover:text-zinc-400
-                transition
-              "
-            >
-              Statistiche
-            </Link>
+          <Link
+            href="/regolamento"
+            onClick={() => setOpen(false)}
+            className="
+              text-5xl
+              md:text-6xl
+              font-black
+              tracking-tight
+              hover:text-zinc-500
+              transition
+            "
+          >
+            Regolamento
+          </Link>
 
-            <Link
-              href="/regolamento"
-              onClick={() => setOpen(false)}
-              className="
-                text-4xl
-                font-black
-                hover:text-zinc-400
-                transition
-              "
-            >
-              Regolamento
-            </Link>
+        </nav>
 
-          </nav>
-
-        </div>
-      )}
+      </div>
     </>
   );
 }
