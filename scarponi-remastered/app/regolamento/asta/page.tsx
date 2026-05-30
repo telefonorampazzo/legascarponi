@@ -30,6 +30,83 @@ export default function AstaPage() {
         </div>
 
       </section>
+{/* DISPOSIZIONE ASTA */}
+<section className="max-w-7xl mx-auto px-8 py-24">
+
+  <div className="text-zinc-500 uppercase tracking-[0.2em] text-sm">
+    Sezione 01
+  </div>
+
+  <h2 className="mt-6 text-6xl md:text-7xl font-black tracking-tight">
+    DISPOSIZIONE
+    <br />
+    UFFICIALE.
+  </h2>
+
+  <p className="mt-8 text-xl text-zinc-400 max-w-3xl leading-10">
+    La disposizione delle postazioni è parte integrante
+    del regolamento d'asta e rappresenta l'unica configurazione
+    ufficiale riconosciuta dalla Lega Scarponi Remastered.
+  </p>
+
+  <div className="mt-16 rounded-[40px] border border-white/10 bg-zinc-950 p-12">
+
+    <div className="grid md:grid-cols-3 gap-6">
+
+      <div className="rounded-3xl border border-white/10 p-8 text-center">
+        <div className="text-3xl font-black">FEDE</div>
+      </div>
+
+      <div className="rounded-3xl border border-white/10 p-8 text-center">
+        <div className="text-3xl font-black">LORE</div>
+      </div>
+
+      <div className="rounded-3xl border border-white/10 p-8 text-center">
+        <div className="text-3xl font-black">RIKY</div>
+      </div>
+
+      <div className="rounded-3xl border border-white/10 p-8 text-center">
+        <div className="text-3xl font-black">MATTIE</div>
+      </div>
+
+      <div className="rounded-3xl border border-white/10 p-8 text-center">
+        <div className="text-3xl font-black">ELY</div>
+      </div>
+
+      <div className="rounded-3xl border border-white/10 p-8 text-center">
+        <div className="text-3xl font-black">HALLEY</div>
+      </div>
+
+      <div className="rounded-3xl border border-white/10 p-8 text-center">
+        <div className="text-3xl font-black">GIAN</div>
+      </div>
+
+      <div className="rounded-3xl border border-white/10 p-8 text-center">
+        <div className="text-3xl font-black">CHECCO</div>
+      </div>
+
+      <div className="rounded-3xl border border-white/10 p-8 text-center">
+        <div className="text-3xl font-black">EMA</div>
+      </div>
+
+      <div className="rounded-3xl border border-yellow-500/30 bg-yellow-500/5 p-8 text-center md:col-span-3">
+        <div className="text-3xl font-black">TINO / SIMO</div>
+      </div>
+
+    </div>
+
+    <div className="mt-10 rounded-3xl border border-yellow-500/20 bg-yellow-500/5 p-8">
+
+      <p className="text-lg text-zinc-300 leading-9">
+        La disposizione sopra indicata è l'unica configurazione
+        valida e riconosciuta durante lo svolgimento dell'asta.
+      </p>
+
+    </div>
+
+  </div>
+
+</section>
 
       {/* ASTA */}
       <section className="max-w-7xl mx-auto px-8 py-24">
