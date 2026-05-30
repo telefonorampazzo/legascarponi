@@ -4,10 +4,17 @@ const nextConfig: NextConfig = {
 
   images: {
     remotePatterns: [
+
       {
         protocol: 'https',
-        hostname: 'content.fantacalcio.it',
+        hostname: 'media.api-sports.io',
       },
+
+      {
+        protocol: 'https',
+        hostname: 'media-1.api-sports.io',
+      },
+
     ],
   },
 

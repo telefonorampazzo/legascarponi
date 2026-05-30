@@ -1,6 +1,4 @@
 import Link from 'next/link'
-import Image from 'next/image'
-import slugify from 'slugify'
 import { notFound } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import TeamPerformanceChart from '@/components/TeamPerformanceChart'
@@ -43,39 +41,160 @@ export default async function TeamPage({
      PLAYERS
   ========================== */
 
-  const { data: players } = await supabase
-    .from('players')
-    .select('*')
-    .eq('fantasy_team', team.name)
-    .order('role')
+  const { data: allPlayers } = await supabase
+  .from('players')
+  .select(`
+    *,
+    player_stats (
+      appearances,
+      goals,
+      assists,
+      rating,
+      minutes_played,
+      yellow_cards,
+      red_cards
+    )
+  `)
 
   /* =========================
-     GROUP PLAYERS
+     TEAM PLAYERS
+  ========================== */
+
+const players =
+  allPlayers
+    ?.filter((player) => {
+
+      const fantasyTeam =
+        player.fantasy_team
+          ?.toLowerCase()
+          ?.trim()
+
+      const currentTeam =
+        team.name
+          ?.toLowerCase()
+          ?.trim()
+
+      return fantasyTeam === currentTeam
+
+    })
+    ?.sort((a, b) => b.cost - a.cost) ?? []
+
+  /* =========================
+     ROLE SYSTEM
+  ========================== */
+
+  const DEFENDER_ROLES = [
+    'dd',
+    'dc',
+    'ds',
+    'e',
+    'b',
+  ]
+
+  const MIDFIELDER_ROLES = [
+    'm',
+    'c',
+    'w',
+    't',
+  ]
+
+  const ATTACKER_ROLES = [
+    'a',
+    'pc',
+  ]
+
+  const getRoles = (
+    playerRole: string
+  ) => {
+
+    return playerRole
+      ?.toLowerCase()
+      ?.split(';')
+      ?.map((r: string) => r.trim()) || []
+
+  }
+
+  /* =========================
+     PORTIERI
   ========================== */
 
   const goalkeepers =
-    players?.filter(
-      (player) =>
-        player.role === 'Por'
-    ) ?? []
+    players.filter((player) => {
+
+      const roles =
+        getRoles(player.role)
+
+      return roles.includes('por')
+
+    })
+
+  /* =========================
+     DIFENSORI
+  ========================== */
 
   const defenders =
-    players?.filter(
-      (player) =>
-        ['Dc', 'Dd', 'Ds'].includes(player.role)
-    ) ?? []
+    players.filter((player) => {
+
+      const roles =
+        getRoles(player.role)
+
+      return roles.some((role: string) =>
+        DEFENDER_ROLES.includes(role)
+      )
+
+    })
+
+  /* =========================
+     CENTROCAMPISTI
+  ========================== */
 
   const midfielders =
-    players?.filter(
-      (player) =>
-        ['M', 'C', 'W', 'T'].includes(player.role)
-    ) ?? []
+    players.filter((player) => {
+
+      const roles =
+        getRoles(player.role)
+
+      const isDefender =
+        roles.some((role: string) =>
+          DEFENDER_ROLES.includes(role)
+        )
+
+      if (isDefender) return false
+
+      return roles.some((role: string) =>
+        MIDFIELDER_ROLES.includes(role)
+      )
+
+    })
+
+  /* =========================
+     ATTACCANTI
+  ========================== */
 
   const attackers =
-    players?.filter(
-      (player) =>
-        ['A', 'Pc'].includes(player.role)
-    ) ?? []
+    players.filter((player) => {
+
+      const roles =
+        getRoles(player.role)
+
+      const isDefender =
+        roles.some((role: string) =>
+          DEFENDER_ROLES.includes(role)
+        )
+
+      const isMidfielder =
+        roles.some((role: string) =>
+          MIDFIELDER_ROLES.includes(role)
+        )
+
+      if (isDefender) return false
+      if (isMidfielder) return false
+
+      return roles.some((role: string) =>
+        ATTACKER_ROLES.includes(role)
+      )
+
+    })
 
   /* =========================
      CALCULATIONS
@@ -125,109 +244,166 @@ export default async function TeamPage({
   ========================== */
 
   const PlayerCard = ({
-    player,
-  }: {
-    player: any
-  }) => {
+  player,
+}: {
+  player: any
+}) => {
 
-    const imageSlug = slugify(
-      player.player_name,
-      {
-        lower: true,
-        strict: true,
-      }
-    )
+  const stats = Array.isArray(player.player_stats)
+    ? player.player_stats[0]
+    : player.player_stats
 
-    const imageUrl =
-      `https://content.fantacalcio.it/web/campioncini/card/${imageSlug}.png`
+  return (
 
-    return (
 
       <div
         className="
           rounded-[32px]
           border border-white/10
           bg-zinc-950
-          overflow-hidden
+          p-8
           hover:border-white/30
           transition
         "
       >
 
-        {/* IMAGE */}
+        {/* TOP */}
         <div
           className="
-            relative
-            h-[320px]
-            bg-zinc-900
+            flex items-center
+            justify-between
           "
         >
 
-          <Image
-            src={imageUrl}
-            alt={player.player_name}
-            fill
-            className="object-cover"
-            unoptimized
-          />
-
-        </div>
-
-        {/* CONTENT */}
-        <div className="p-8">
+          <div
+            className="
+              text-xs
+              uppercase
+              tracking-[0.3em]
+              text-zinc-500
+            "
+          >
+            {player.role}
+          </div>
 
           <div
             className="
-              flex items-center
-              justify-between
+              text-sm
+              font-semibold
+              text-zinc-400
             "
           >
+            {player.cost} cr
+          </div>
 
-            <div
-              className="
-                text-xs
-                uppercase
-                tracking-[0.3em]
-                text-zinc-500
-              "
-            >
-              {player.role}
+        </div>
+
+        {/* NAME */}
+        <Link
+          href={`/giocatori/${player.id}`}
+          className="
+            mt-8
+            block
+            text-3xl
+            font-black
+            tracking-tight
+            leading-tight
+            hover:text-white
+hover:underline
+cursor-pointer
+            transition
+          "
+        >
+          {player.player_name}
+        </Link>
+
+        {/* TEAM */}
+        <div className="mt-8">
+
+          <div className="text-zinc-500 text-sm">
+            Club
+          </div>
+
+          <div className="mt-2 text-lg">
+            {player.real_team}
+          </div>
+
+        </div>
+
+        {/* STATS */}
+        <div className="mt-10 grid grid-cols-3 gap-4">
+
+          <div>
+
+            <div className="text-zinc-500 text-xs uppercase">
+              Pres
             </div>
 
-            <div
-              className="
-                text-sm
-                font-semibold
-                text-zinc-400
-              "
-            >
-              {player.cost} cr
+            <div className="mt-2 text-2xl font-black">
+              {stats?.appearances || 0}
             </div>
 
           </div>
 
-          <h3
+          <div>
+
+            <div className="text-zinc-500 text-xs uppercase">
+              Gol
+            </div>
+
+            <div className="mt-2 text-2xl font-black">
+              {stats?.goals || 0}
+            </div>
+
+          </div>
+
+          <div>
+
+            <div className="text-zinc-500 text-xs uppercase">
+              Assist
+            </div>
+
+            <div className="mt-2 text-2xl font-black">
+              {stats?.assists || 0}
+            </div>
+
+          </div>
+
+        </div>
+
+        {/* FM */}
+        <div
+          className="
+            mt-10
+            pt-6
+            border-t border-white/10
+            flex items-center justify-between
+          "
+        >
+
+          <div>
+
+            <div className="text-zinc-500 text-xs uppercase">
+  Rating
+</div>
+
+<div className="mt-2 text-3xl font-black">
+  {stats?.rating ?? '-'}
+</div>
+
+          </div>
+
+          <div
             className="
-              mt-6
-              text-3xl
-              font-black
-              tracking-tight
-              leading-tight
+              h-14 w-14
+              rounded-full
+              border border-white/10
+              flex items-center justify-center
+              text-sm font-bold
+              bg-white text-black
             "
           >
-            {player.player_name}
-          </h3>
-
-          <div className="mt-8">
-
-            <div className="text-zinc-500 text-sm">
-              Club
-            </div>
-
-            <div className="mt-2 text-lg">
-              {player.real_team}
-            </div>
-
+            {player.role}
           </div>
 
         </div>
@@ -235,7 +411,35 @@ export default async function TeamPage({
       </div>
 
     )
+
   }
+
+  /* =========================
+     ROLE SECTIONS
+  ========================== */
+
+  const sections = [
+    {
+      title: 'PORTIERI.',
+      subtitle: 'Goalkeepers',
+      players: goalkeepers,
+    },
+    {
+      title: 'DIFENSORI.',
+      subtitle: 'Defenders',
+      players: defenders,
+    },
+    {
+      title: 'CENTROCAMPISTI.',
+      subtitle: 'Midfielders',
+      players: midfielders,
+    },
+    {
+      title: 'ATTACCANTI.',
+      subtitle: 'Attackers',
+      players: attackers,
+    },
+  ]
 
   return (
     <main className="bg-black text-white overflow-hidden">
@@ -465,28 +669,7 @@ export default async function TeamPage({
       </section>
 
       {/* ROLE SECTIONS */}
-      {[
-        {
-          title: 'PORTIERI.',
-          subtitle: 'Goalkeepers',
-          players: goalkeepers,
-        },
-        {
-          title: 'DIFENSORI.',
-          subtitle: 'Defenders',
-          players: defenders,
-        },
-        {
-          title: 'CENTROCAMPISTI.',
-          subtitle: 'Midfielders',
-          players: midfielders,
-        },
-        {
-          title: 'ATTACCANTI.',
-          subtitle: 'Attackers',
-          players: attackers,
-        },
-      ].map((section) => (
+      {sections.map((section) => (
 
         <section
           key={section.title}
@@ -519,10 +702,12 @@ export default async function TeamPage({
             <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-6 mt-16">
 
               {section.players.map((player) => (
+
                 <PlayerCard
                   key={player.id}
                   player={player}
                 />
+
               ))}
 
             </div>
