@@ -66,11 +66,11 @@ export default function AstaPage() {
       </div>
 
       <div className="rounded-3xl border border-white/10 p-8 text-center">
-        <div className="text-3xl font-black">MATTIE</div>
+        <div className="text-3xl font-black">MATTE</div>
       </div>
 
       <div className="rounded-3xl border border-white/10 p-8 text-center">
-        <div className="text-3xl font-black">ELY</div>
+        <div className="text-3xl font-black">ELY (CT)</div>
       </div>
 
       <div className="rounded-3xl border border-white/10 p-8 text-center">
@@ -90,7 +90,7 @@ export default function AstaPage() {
       </div>
 
       <div className="rounded-3xl border border-yellow-500/30 bg-yellow-500/5 p-8 text-center md:col-span-3">
-        <div className="text-3xl font-black">TINO / SIMO</div>
+        <div className="text-3xl font-black">TINO / SIMO (CT)</div>
       </div>
 
     </div>

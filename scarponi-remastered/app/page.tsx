@@ -2,11 +2,6 @@ import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 
 export default async function HomePage() {
-
-  /* =========================
-     REAL DATA
-  ========================== */
-
   const { data: teams } = await supabase
     .from('teams')
     .select('*')
@@ -15,124 +10,162 @@ export default async function HomePage() {
     })
 
   const topTeams = teams?.slice(0, 5) ?? []
-
   const leader = topTeams[0]
 
   return (
-    <main className="bg-black text-white overflow-hidden">
+    <main className="overflow-hidden">
 
       {/* HERO */}
-      <section className="relative h-screen flex items-end overflow-hidden">
+      <section
+        className="
+          relative
+          min-h-screen
+          flex
+          items-center
+          bg-gradient-to-b
+          from-black
+          via-zinc-950
+          to-emerald-950/20
+          text-white
+        "
+      >
 
-        {/* BACKGROUND */}
-        <div className="absolute inset-0 bg-black" />
-
-        {/* GRID */}
         <div
           className="
-            absolute inset-0
-            opacity-[0.04]
-            bg-[linear-gradient(to_right,#ffffff_1px,transparent_1px),linear-gradient(to_bottom,#ffffff_1px,transparent_1px)]
-            bg-[size:120px_120px]
-          "
-        />
-
-        {/* GLOW */}
-        <div
-          className="
-            absolute top-0 left-1/2
+            absolute
+            top-0
+            left-1/2
             -translate-x-1/2
-            h-[700px] w-[700px]
+            h-[700px]
+            w-[700px]
             rounded-full
-            bg-white/5
+            bg-emerald-500/10
             blur-[180px]
           "
         />
 
-        {/* CONTENT */}
-        <div
-          className="
-            relative z-10
-            max-w-7xl mx-auto
-            px-8
-            pb-24
-            w-full
-          "
-        >
+        <div className="relative z-10 max-w-7xl mx-auto px-8">
 
-          <div className="max-w-5xl">
+          <div
+            className="
+              text-sm
+              uppercase
+              tracking-[0.4em]
+              text-zinc-500
+            "
+          >
+            Lega Scarponi Remastered
+          </div>
 
-            <div
+          <h1
+            className="
+              mt-8
+              text-7xl
+              md:text-[11rem]
+              font-black
+              leading-[0.85]
+              tracking-tight
+            "
+          >
+            LEGA
+            <br />
+            SCARPONI
+            <br />
+            REMASTERED.
+          </h1>
+
+          <p
+            className="
+              mt-10
+              text-xl
+              text-zinc-400
+              max-w-2xl
+              leading-10
+            "
+          >
+            Fantacalcio Mantra.
+            Competizione reale.
+            Statistiche live.
+          </p>
+
+          <div className="mt-14 flex flex-wrap gap-4">
+
+            <Link
+              href="/squadre"
               className="
-                text-sm uppercase
-                tracking-[0.4em]
-                text-zinc-500
+                rounded-full
+                bg-white
+                text-black
+                px-8 py-4
+                font-semibold
+                hover:bg-zinc-200
+                transition
               "
             >
-              Lega Scarponi Remastered
+              Esplora le Squadre
+            </Link>
+
+            <Link
+              href="/regolamento"
+              className="
+                rounded-full
+                border
+                border-white/10
+                px-8 py-4
+                font-semibold
+                hover:bg-white/10
+                transition
+              "
+            >
+              Regolamento
+            </Link>
+
+          </div>
+
+        </div>
+
+      </section>
+
+      {/* NUMERI */}
+      <section className="bg-zinc-100 text-black">
+
+        <div className="max-w-7xl mx-auto px-8 py-32">
+
+          <div className="grid md:grid-cols-3 gap-16">
+
+            <div>
+
+              <div className="text-8xl md:text-9xl font-black">
+                10
+              </div>
+
+              <div className="mt-4 text-xl text-zinc-500">
+                Fantallenatori
+              </div>
+
             </div>
 
-            <h1
-              className="
-                mt-8
-                text-7xl md:text-[10rem]
-                font-black
-                leading-[0.9]
-                tracking-tight
-              "
-            >
-              LIVE
-              <br />
-              THE
-              <br />
-              GAME.
-            </h1>
+            <div>
 
-            <p
-              className="
-                mt-10
-                text-xl
-                text-zinc-400
-                max-w-2xl
-                leading-10
-              "
-            >
-              Classifica live, statistiche avanzate
-              e schede squadra aggiornate automaticamente.
-            </p>
+              <div className="text-8xl md:text-9xl font-black">
+                800€
+              </div>
 
-            <div className="mt-14 flex flex-wrap gap-4">
+              <div className="mt-4 text-xl text-zinc-500">
+                Montepremi
+              </div>
 
-              <Link
-                href="/squadre"
-                className="
-                  rounded-full
-                  bg-white
-                  text-black
-                  px-8 py-4
-                  font-semibold
-                  hover:bg-zinc-200
-                  transition
-                "
-              >
-                Esplora le Squadre
-              </Link>
+            </div>
 
-              <Link
-                href="/regolamento"
-                className="
-                  rounded-full
-                  border border-white/10
-                  bg-white/5
-                  backdrop-blur-xl
-                  px-8 py-4
-                  font-semibold
-                  hover:bg-white/10
-                  transition
-                "
-              >
-                Regolamento
-              </Link>
+            <div>
+
+              <div className="text-8xl md:text-9xl font-black">
+                380
+              </div>
+
+              <div className="mt-4 text-xl text-zinc-500">
+                Partite
+              </div>
 
             </div>
 
@@ -142,80 +175,70 @@ export default async function HomePage() {
 
       </section>
 
-      {/* LEADER */}
+      {/* CAPOLISTA */}
       {leader && (
-        <section className="border-t border-white/10">
+        <section className="bg-black text-white">
 
           <div className="max-w-7xl mx-auto px-8 py-32">
 
-            <div className="grid xl:grid-cols-2 gap-20 items-end">
+            <div
+              className="
+                text-sm
+                uppercase
+                tracking-[0.4em]
+                text-zinc-500
+              "
+            >
+              Team Leader
+            </div>
+
+            <h2
+              className="
+                mt-8
+                text-[5rem]
+                md:text-[10rem]
+                font-black
+                tracking-tight
+                leading-[0.85]
+              "
+            >
+              {leader.name}
+            </h2>
+
+            <div className="grid md:grid-cols-3 gap-10 mt-20">
 
               <div>
 
-                <div
-                  className="
-                    text-sm uppercase
-                    tracking-[0.4em]
-                    text-zinc-500
-                  "
-                >
-                  Team Leader
+                <div className="text-zinc-500">
+                  Punti
                 </div>
 
-                <h2
-                  className="
-                    mt-8
-                    text-6xl md:text-[8rem]
-                    font-black
-                    leading-[0.9]
-                    tracking-tight
-                  "
-                >
-                  {leader.name}.
-                </h2>
+                <div className="text-6xl font-black mt-3">
+                  {leader.points}
+                </div>
 
               </div>
 
               <div>
 
-                <div className="space-y-10">
+                <div className="text-zinc-500">
+                  Fantapunti
+                </div>
 
-                  <div className="flex items-center justify-between">
+                <div className="text-6xl font-black mt-3">
+                  {leader.total_points}
+                </div>
 
-                    <span className="text-zinc-500 text-lg">
-                      Punti
-                    </span>
+              </div>
 
-                    <span className="text-6xl font-black">
-                      {leader.points}
-                    </span>
+              <div>
 
-                  </div>
+                <div className="text-zinc-500">
+                  Vittorie
+                </div>
 
-                  <div className="flex items-center justify-between">
-
-                    <span className="text-zinc-500 text-lg">
-                      Fantapunti
-                    </span>
-
-                    <span className="text-6xl font-black">
-                      {leader.total_points}
-                    </span>
-
-                  </div>
-
-                  <div className="flex items-center justify-between">
-
-                    <span className="text-zinc-500 text-lg">
-                      Vittorie
-                    </span>
-
-                    <span className="text-6xl font-black">
-                      {leader.wins}
-                    </span>
-
-                  </div>
-
+                <div className="text-6xl font-black mt-3">
+                  {leader.wins}
                 </div>
 
               </div>
@@ -228,13 +251,14 @@ export default async function HomePage() {
       )}
 
       {/* CLASSIFICA */}
-      <section className="border-t border-white/10">
+      <section className="bg-zinc-100 text-black">
 
         <div className="max-w-7xl mx-auto px-8 py-32">
 
           <div
             className="
-              text-sm uppercase
+              text-sm
+              uppercase
               tracking-[0.4em]
               text-zinc-500
             "
@@ -250,10 +274,15 @@ export default async function HomePage() {
                 key={team.id}
                 href={`/squadre/${team.slug}`}
                 className="
-                  flex items-center justify-between
-                  border-b border-white/10
+                  flex
+                  items-center
+                  justify-between
+                  border-b
+                  border-zinc-300
                   pb-10
                   group
+                  transition-all
+                  hover:translate-x-3
                 "
               >
 
@@ -262,8 +291,8 @@ export default async function HomePage() {
                   <div
                     className="
                       text-3xl
-                      text-zinc-500
                       font-black
+                      text-zinc-400
                       w-16
                     "
                   >
@@ -274,11 +303,10 @@ export default async function HomePage() {
 
                     <div
                       className="
-                        text-4xl md:text-6xl
+                        text-4xl
+                        md:text-6xl
                         font-black
                         tracking-tight
-                        group-hover:text-zinc-300
-                        transition
                       "
                     >
                       {team.name}
@@ -300,9 +328,8 @@ export default async function HomePage() {
 
                 <div
                   className="
-                    text-4xl md:text-5xl
+                    text-5xl
                     font-black
-                    text-zinc-400
                   "
                 >
                   {team.points}
@@ -318,118 +345,15 @@ export default async function HomePage() {
 
       </section>
 
-      {/* STATS */}
-      <section className="border-t border-white/10">
-
-        <div className="max-w-7xl mx-auto px-8 py-32">
-
-          <div className="grid xl:grid-cols-3 gap-8">
-
-            <div
-              className="
-                rounded-[40px]
-                border border-white/10
-                bg-zinc-950
-                p-12
-              "
-            >
-
-              <div
-                className="
-                  text-sm uppercase
-                  tracking-[0.3em]
-                  text-zinc-500
-                "
-              >
-                Squadre
-              </div>
-
-              <div
-                className="
-                  mt-8
-                  text-7xl
-                  font-black
-                  tracking-tight
-                "
-              >
-                {teams?.length ?? 0}
-              </div>
-
-            </div>
-
-            <div
-              className="
-                rounded-[40px]
-                border border-white/10
-                bg-zinc-950
-                p-12
-              "
-            >
-
-              <div
-                className="
-                  text-sm uppercase
-                  tracking-[0.3em]
-                  text-zinc-500
-                "
-              >
-                Leader
-              </div>
-
-              <div
-                className="
-                  mt-8
-                  text-5xl
-                  font-black
-                  tracking-tight
-                  leading-tight
-                "
-              >
-                {leader?.name}
-              </div>
-
-            </div>
-
-            <div
-              className="
-                rounded-[40px]
-                border border-white/10
-                bg-zinc-950
-                p-12
-              "
-            >
-
-              <div
-                className="
-                  text-sm uppercase
-                  tracking-[0.3em]
-                  text-zinc-500
-                "
-              >
-                Punti Leader
-              </div>
-
-              <div
-                className="
-                  mt-8
-                  text-7xl
-                  font-black
-                  tracking-tight
-                "
-              >
-                {leader?.points}
-              </div>
-
-            </div>
-
-          </div>
-
-        </div>
-
-      </section>
-
       {/* CTA */}
-      <section className="border-t border-white/10">
+      <section
+        className="
+          bg-gradient-to-b
+          from-black
+          to-emerald-950/20
+          text-white
+        "
+      >
 
         <div className="max-w-7xl mx-auto px-8 py-32">
 
@@ -437,7 +361,8 @@ export default async function HomePage() {
 
             <div
               className="
-                text-sm uppercase
+                text-sm
+                uppercase
                 tracking-[0.4em]
                 text-zinc-500
               "
@@ -448,17 +373,18 @@ export default async function HomePage() {
             <h2
               className="
                 mt-8
-                text-6xl md:text-[8rem]
+                text-6xl
+                md:text-[9rem]
                 font-black
                 tracking-tight
-                leading-[0.9]
+                leading-[0.85]
               "
             >
-              COMPETI.
+              LA STAGIONE
               <br />
-              DOMINA.
+              NON
               <br />
-              VINCI.
+              ASPETTA.
             </h2>
 
             <div className="mt-16">
@@ -477,7 +403,7 @@ export default async function HomePage() {
                   transition
                 "
               >
-                Visualizza Classifica
+                Visualizza la Classifica
               </Link>
 
             </div>

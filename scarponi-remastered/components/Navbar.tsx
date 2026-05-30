@@ -2,16 +2,26 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
+
+const logos = [
+  "/logos/riky.png",
+  "/logos/fede.png",
+  "/logos/halley.png",
+  "/logos/lore.png",
+  "/logos/gian.png",
+  "/logos/ema.png",
+  "/logos/ely.png",
+  "/logos/checco.png",
+  "/logos/matte.png",
+  "/logos/tino.png",
+];
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    if (open) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "auto";
-    }
+    document.body.style.overflow = open ? "hidden" : "auto";
 
     return () => {
       document.body.style.overflow = "auto";
@@ -25,27 +35,52 @@ export default function Navbar() {
           fixed top-0 left-0 right-0 z-50
           bg-black/30
           backdrop-blur-xl
+          border-b border-white/5
         "
       >
-        <div className="max-w-7xl mx-auto px-8">
+        <div className="max-w-7xl mx-auto px-4 lg:px-8">
 
-          <div className="h-20 flex items-center justify-between">
+          <div className="h-20 flex items-center gap-4">
 
+            {/* STEMMI */}
             <Link
               href="/"
               className="
-                text-white
-                font-black
-                tracking-tight
-                text-2xl
+                flex
+                items-center
+                gap-1
+                flex-1
+                overflow-x-auto
               "
             >
-              LEGA SCARPONI
+              {logos.map((logo) => (
+                <Image
+                  key={logo}
+                  src={logo}
+                  alt=""
+                  width={52}
+                  height={52}
+                  className="
+                    shrink-0
+                    object-contain
+                    transition-all
+                    duration-300
+                    hover:scale-125
+                    hover:-translate-y-1
+                  "
+                />
+              ))}
             </Link>
 
-            {/* DESKTOP MENU */}
-            <nav className="hidden md:flex items-center gap-8">
-
+            {/* MENU DESKTOP */}
+            <nav
+              className="
+                hidden
+                xl:flex
+                items-center
+                gap-8
+              "
+            >
               <Link
                 href="/"
                 className="text-sm text-zinc-300 hover:text-white transition"
@@ -73,17 +108,17 @@ export default function Navbar() {
               >
                 Regolamento
               </Link>
-
             </nav>
 
-            {/* MOBILE HAMBURGER */}
+            {/* HAMBURGER */}
             <button
               onClick={() => setOpen(true)}
               className="
-                md:hidden
+                xl:hidden
                 flex
                 flex-col
                 gap-1.5
+                shrink-0
               "
             >
               <span className="w-6 h-[2px] bg-white block" />
@@ -94,7 +129,6 @@ export default function Navbar() {
           </div>
 
         </div>
-
       </header>
 
       {/* MOBILE MENU */}
@@ -112,17 +146,7 @@ export default function Navbar() {
         `}
       >
 
-        <div className="flex justify-between items-center p-8">
-
-          <div
-            className="
-              text-white
-              font-black
-              text-2xl
-            "
-          >
-            LEGA SCARPONI
-          </div>
+        <div className="flex justify-end p-8">
 
           <button
             onClick={() => setOpen(false)}
@@ -153,7 +177,6 @@ export default function Navbar() {
             onClick={() => setOpen(false)}
             className="
               text-5xl
-              md:text-6xl
               font-black
               tracking-tight
               hover:text-zinc-500
@@ -168,7 +191,6 @@ export default function Navbar() {
             onClick={() => setOpen(false)}
             className="
               text-5xl
-              md:text-6xl
               font-black
               tracking-tight
               hover:text-zinc-500
@@ -183,7 +205,6 @@ export default function Navbar() {
             onClick={() => setOpen(false)}
             className="
               text-5xl
-              md:text-6xl
               font-black
               tracking-tight
               hover:text-zinc-500
@@ -198,7 +219,6 @@ export default function Navbar() {
             onClick={() => setOpen(false)}
             className="
               text-5xl
-              md:text-6xl
               font-black
               tracking-tight
               hover:text-zinc-500
